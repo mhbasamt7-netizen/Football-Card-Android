@@ -1,5 +1,4 @@
-
-name: بناء لعبة كرة القدم APK
+name: Build Football Card APK
 
 on:
   workflow_dispatch:
@@ -11,25 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: تحميل ملفات اللعبة
+      - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: تجهيز جافا
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: تجهيز أندرويد
-        uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
-      - name: تجهيز Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: بناء APK
+      - name: Build APK
         run: gradle assembleDebug --stacktrace
 
-      - name: حفظ ملف APK للتحميل
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Football-Card-APK
